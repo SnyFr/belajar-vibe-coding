@@ -15,6 +15,13 @@
       "when": 1795612734467,
       "tag": "0001_young_bushwacker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795614736226,
+      "tag": "0002_tired_pepper_potts",
+      "breakpoints": true
     }
   ]
 }
