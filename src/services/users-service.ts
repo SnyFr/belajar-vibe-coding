@@ -85,3 +85,46 @@ export async function loginUser(input: LoginUserInput): Promise<string> {
   return token;
 }
 
+export interface CurrentUserResponse {
+  id: number;
+  name: string;
+  email: string;
+  created_at: Date;
+}
+
+export class UnauthorizedError extends Error {
+  constructor() {
+    super('Unauthorized');
+    this.name = 'UnauthorizedError';
+  }
+}
+
+/**
+ * Retrieves the currently authenticated user by validating the session bearer token.
+ */
+export async function getCurrentUser(token: string): Promise<CurrentUserResponse> {
+  if (!token) {
+    throw new UnauthorizedError();
+  }
+
+  const db = getDb();
+
+  const [user] = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      created_at: users.createdAt,
+    })
+    .from(sessions)
+    .innerJoin(users, eq(sessions.userId, users.id))
+    .where(eq(sessions.token, token))
+    .limit(1);
+
+  if (!user) {
+    throw new UnauthorizedError();
+  }
+
+  return user;
+}
+
